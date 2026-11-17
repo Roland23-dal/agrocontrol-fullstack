@@ -1,0 +1,49 @@
+<header class="page-header">
+  <div>
+    <h1>Cultivos</h1>
+    <p>Catálogo de cultivos que se siembran en las parcelas.</p>
+  </div>
+  @if (auth.puedeEscribir()) {
+    <div class="page-header__acciones">
+      <a class="btn" routerLink="/cultivos/nuevo">Nuevo cultivo</a>
+    </div>
+  }
+</header>
+
+<div class="filtros">
+  <div class="campo">
+    <label for="busqueda">Buscar cultivo</label>
+    <input id="busqueda" type="search" [formControl]="busqueda" placeholder="Ej. Mango" />
+  </div>
+</div>
+
+@if (cargando()) {
+  <div class="cargando">Cargando cultivos...</div>
+} @else if (filtrados().length === 0) {
+  <div class="tabla-wrap"><p class="vacio">No hay cultivos para mostrar.</p></div>
+} @else {
+  <div class="grid-tarjetas">
+    @for (c of filtrados(); track c.id) {
+      <article class="card cultivo">
+        <h2><a [routerLink]="['/cultivos', c.id]">{{ c.nombre }}</a></h2>
+        <p class="cultivo__variedad">{{ c.variedad || 'Sin variedad registrada' }}</p>
+        <p class="cultivo__ciclo">
+          @if (c.cicloDiasEstimado) {
+            <strong>{{ c.cicloDiasEstimado }}</strong> días de ciclo estimado
+          } @else {
+            Ciclo no registrado
+          }
+        </p>
+        <div class="form-acciones">
+          <a class="btn btn--contorno btn--sm" [routerLink]="['/cultivos', c.id]">Ver</a>
+          @if (auth.puedeEscribir()) {
+            <a class="btn btn--contorno btn--sm" [routerLink]="['/cultivos', c.id, 'editar']">Editar</a>
+          }
+          @if (auth.puedeEliminar()) {
+            <button type="button" class="btn btn--peligro-contorno btn--sm" (click)="eliminar(c)">Eliminar</button>
+          }
+        </div>
+      </article>
+    }
+  </div>
+}

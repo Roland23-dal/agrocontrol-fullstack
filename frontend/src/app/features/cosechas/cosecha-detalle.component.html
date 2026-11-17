@@ -1,0 +1,36 @@
+<nav class="migas" aria-label="Ruta de navegación"><a routerLink="/cosechas">Cosechas</a> / Detalle</nav>
+
+@if (cargando()) {
+  <div class="cargando">Cargando cosecha...</div>
+} @else {
+  @if (cosecha(); as c) {
+  <header class="page-header">
+    <div>
+      <h1>Cosecha del {{ c.fecha | date: 'dd/MM/yyyy' }}</h1>
+      <p><strong>{{ c.cantidadKg | number: '1.0-2' }} kg</strong> de {{ c.campana.cultivo.nombre }}</p>
+    </div>
+    <div class="page-header__acciones">
+      @if (auth.puedeEscribir()) {
+        <a class="btn btn--contorno" [routerLink]="['/cosechas', c.id, 'editar']">Editar</a>
+      }
+      @if (auth.puedeEliminar()) {
+        <button type="button" class="btn btn--peligro-contorno" (click)="eliminar()">Eliminar</button>
+      }
+    </div>
+  </header>
+
+  <section class="card">
+    <h2>Datos de la cosecha</h2>
+    <dl class="datos">
+      <dt>Fecha</dt><dd>{{ c.fecha | date: 'dd/MM/yyyy' }}</dd>
+      <dt>Cantidad</dt><dd>{{ c.cantidadKg | number: '1.0-2' }} kg</dd>
+      <dt>Observación</dt><dd>{{ c.observacion || '-' }}</dd>
+      <dt>Campaña</dt>
+      <dd>
+        <a [routerLink]="['/campanas', c.campana.id]">{{ c.campana.cultivo.nombre }} en {{ c.campana.parcela.nombre }}</a>
+        <app-estado-badge [estado]="c.campana.estado" />
+      </dd>
+    </dl>
+  </section>
+  }
+}

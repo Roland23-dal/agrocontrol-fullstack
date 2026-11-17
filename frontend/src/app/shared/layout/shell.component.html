@@ -1,0 +1,37 @@
+<div class="shell" [class.shell--abierto]="menuAbierto()">
+  <header class="topbar">
+    <button type="button" class="topbar__menu" (click)="alternarMenu()" [attr.aria-expanded]="menuAbierto()" aria-controls="menu-lateral">
+      <span class="visually-hidden">Abrir o cerrar el menú</span>
+      <span aria-hidden="true">&#9776;</span>
+    </button>
+    <span class="topbar__marca">AgroControl</span>
+  </header>
+
+  <aside class="sidebar" id="menu-lateral">
+    <a class="marca" routerLink="/dashboard" (click)="cerrarMenu()">
+      <svg viewBox="0 0 64 64" width="34" height="34" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="#d6e04a"/>
+        <path d="M14 46c10-2 18-10 20-26 6 6 10 14 6 24-4 8-16 8-26 2z" fill="#17342a"/>
+      </svg>
+      <span>AgroControl</span>
+    </a>
+
+    <nav aria-label="Navegación principal">
+      @for (e of visibles(); track e.ruta) {
+        <a [routerLink]="e.ruta" routerLinkActive="activo" (click)="cerrarMenu()">{{ e.texto }}</a>
+      }
+    </nav>
+
+    <div class="usuario">
+      <strong>{{ nombreCompleto() || auth.username() }}</strong>
+      <span>{{ rolPrincipal() }}</span>
+      <button type="button" class="btn btn--contorno btn--sm" (click)="salir()">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <div class="velo" (click)="cerrarMenu()"></div>
+
+  <main class="contenido">
+    <router-outlet />
+  </main>
+</div>

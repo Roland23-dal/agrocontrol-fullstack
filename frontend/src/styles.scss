@@ -1,0 +1,7 @@
+// ==========================================================
+// AgroControl - Hoja de estilos global (SASS)
+// Estructura: variables -> mixins -> base -> componentes reutilizables
+// ==========================================================
+@use 'styles/variables' as *;
+@use 'styles/base';
+@use 'styles/components';

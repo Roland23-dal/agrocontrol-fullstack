@@ -1,0 +1,88 @@
+<header class="page-header">
+  <div>
+    <h1>Campañas agrícolas</h1>
+    <p>Proceso productivo de un cultivo en una parcela durante un periodo.</p>
+  </div>
+  @if (auth.puedeEscribir()) {
+    <div class="page-header__acciones">
+      <a class="btn" routerLink="/campanas/nueva">Nueva campaña</a>
+    </div>
+  }
+</header>
+
+<form class="filtros" [formGroup]="filtros" (submit)="$event.preventDefault()">
+  <div class="campo">
+    <label for="f-estado">Estado</label>
+    <select id="f-estado" formControlName="estado">
+      <option value="">Todos</option>
+      @for (e of estados; track e) {
+        <option [value]="e">{{ e === 'EN_CURSO' ? 'En curso' : e === 'PLANIFICADA' ? 'Planificada' : 'Finalizada' }}</option>
+      }
+    </select>
+  </div>
+  <div class="campo">
+    <label for="f-cultivo">Cultivo</label>
+    <input id="f-cultivo" type="search" formControlName="cultivo" placeholder="Ej. Arroz" />
+  </div>
+  <div class="campo">
+    <label for="f-desde">Inicio desde</label>
+    <input id="f-desde" type="date" formControlName="desde" />
+  </div>
+  <div class="campo">
+    <label for="f-hasta">Inicio hasta</label>
+    <input id="f-hasta" type="date" formControlName="hasta" />
+  </div>
+  <label class="check">
+    <input type="checkbox" formControlName="soloAtrasadas" /> Solo atrasadas
+  </label>
+  <button type="button" class="btn btn--contorno" (click)="limpiar()">Limpiar filtros</button>
+</form>
+
+@if (cargando()) {
+  <div class="cargando">Cargando campañas...</div>
+} @else if (campanas().length === 0) {
+  <div class="tabla-wrap"><p class="vacio">No se encontraron campañas con esos criterios.</p></div>
+} @else {
+  <div class="tabla-wrap">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Cultivo</th>
+          <th>Parcela</th>
+          <th>Inicio</th>
+          <th>Fin estimado</th>
+          <th>Estado</th>
+          <th><span class="visually-hidden">Acciones</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (c of visibles(); track c.id) {
+          <tr>
+            <td><a [routerLink]="['/campanas', c.id]">{{ c.cultivo.nombre }}</a>@if (c.cultivo.variedad) { <small> ({{ c.cultivo.variedad }})</small> }</td>
+            <td><a [routerLink]="['/parcelas', c.parcela.id]">{{ c.parcela.nombre }}</a></td>
+            <td>{{ c.fechaInicio | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ c.fechaFinEstimada ? (c.fechaFinEstimada | date: 'dd/MM/yyyy') : '-' }}</td>
+            <td>
+              <app-estado-badge [estado]="c.estado" />
+              @if (esAtrasada(c)) {
+                <span class="insignia insignia--atrasada">Atrasada</span>
+              }
+            </td>
+            <td>
+              <div class="acciones">
+                <a class="btn btn--contorno btn--sm" [routerLink]="['/campanas', c.id]">Ver</a>
+                @if (auth.puedeEscribir()) {
+                  <a class="btn btn--contorno btn--sm" [routerLink]="['/campanas', c.id, 'editar']">Editar</a>
+                }
+                @if (auth.puedeEliminar()) {
+                  <button type="button" class="btn btn--peligro-contorno btn--sm" (click)="eliminar(c)">Eliminar</button>
+                }
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    <app-paginador [total]="campanas().length" [pagina]="pagina()" [tamano]="tamano" (paginaChange)="pagina.set($event)" />
+  </div>
+}

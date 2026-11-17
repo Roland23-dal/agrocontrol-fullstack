@@ -1,0 +1,100 @@
+<header class="page-header">
+  <div>
+    <h1>Panel general</h1>
+    <p>Resumen de la producción agrícola de la asociación.</p>
+  </div>
+  @if (auth.puedeEscribir()) {
+    <div class="page-header__acciones">
+      <a class="btn btn--contorno" routerLink="/campanas/nueva">Nueva campaña</a>
+      <a class="btn" routerLink="/cosechas/nueva">Registrar cosecha</a>
+    </div>
+  }
+</header>
+
+@if (cargando()) {
+  <div class="cargando">Cargando indicadores...</div>
+} @else if (error()) {
+  <div class="alerta alerta--error" role="alert">{{ error() }}</div>
+} @else {
+  @if (datos(); as d) {
+  <section class="kpis" aria-label="Indicadores">
+    <a class="kpi" routerLink="/productores">
+      <span class="kpi__valor">{{ d.productores }}</span>
+      <span class="kpi__texto">Productores</span>
+    </a>
+    <a class="kpi" routerLink="/parcelas">
+      <span class="kpi__valor">{{ d.parcelas }}</span>
+      <span class="kpi__texto">Parcelas ({{ d.hectareas | number: '1.0-1' }} ha)</span>
+    </a>
+    <a class="kpi" routerLink="/cultivos">
+      <span class="kpi__valor">{{ d.cultivos }}</span>
+      <span class="kpi__texto">Cultivos en catálogo</span>
+    </a>
+    <a class="kpi kpi--destacado" routerLink="/cosechas">
+      <span class="kpi__valor">{{ d.totalKg | number: '1.0-0' }}</span>
+      <span class="kpi__texto">Kilogramos cosechados</span>
+    </a>
+  </section>
+
+  <div class="grid-2">
+    <section class="card">
+      <h2>Campañas por estado</h2>
+      <ul class="barras">
+        @for (b of d.barras; track b.estado) {
+          <li>
+            <div class="barras__fila">
+              <app-estado-badge [estado]="b.estado" />
+              <strong>{{ b.cantidad }}</strong>
+            </div>
+            <div class="barras__pista" aria-hidden="true">
+              <div [class]="'barras__relleno barras__relleno--' + b.estado.toLowerCase()" [style.width.%]="b.porcentaje"></div>
+            </div>
+          </li>
+        }
+      </ul>
+      <a routerLink="/campanas">Ver todas las campañas</a>
+    </section>
+
+    <section class="card">
+      <h2>Campañas atrasadas</h2>
+      @if (d.atrasadas.length === 0) {
+        <p class="vacio">No hay campañas en curso con fecha de fin vencida.</p>
+      } @else {
+        <ul class="lista-simple">
+          @for (c of d.atrasadas; track c.id) {
+            <li>
+              <a [routerLink]="['/campanas', c.id]">{{ c.cultivo.nombre }} - {{ c.parcela.nombre }}</a>
+              <span class="insignia insignia--atrasada">Venció {{ c.fechaFinEstimada | date: 'dd/MM/yyyy' }}</span>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  </div>
+
+  <section class="card" style="margin-top: 1rem">
+    <h2>Últimas cosechas registradas</h2>
+    @if (d.ultimasCosechas.length === 0) {
+      <p class="vacio">Aún no hay cosechas registradas.</p>
+    } @else {
+      <div class="tabla-wrap" style="box-shadow: none">
+        <table class="tabla">
+          <thead>
+            <tr><th>Fecha</th><th>Cultivo</th><th>Parcela</th><th class="num">Cantidad (kg)</th></tr>
+          </thead>
+          <tbody>
+            @for (c of d.ultimasCosechas; track c.id) {
+              <tr>
+                <td>{{ c.fecha | date: 'dd/MM/yyyy' }}</td>
+                <td>{{ c.campana.cultivo.nombre }}</td>
+                <td>{{ c.campana.parcela.nombre }}</td>
+                <td class="num">{{ c.cantidadKg | number: '1.0-1' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+  }
+}

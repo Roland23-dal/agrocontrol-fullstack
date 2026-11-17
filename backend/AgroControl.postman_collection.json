@@ -1,0 +1,1000 @@
+{
+  "info": {
+    "name": "AgroControl API - APF2 (JPA + JPQL + Spring Security + JWT)",
+    "description": "Coleccion de pruebas de AgroControl (Unidad 2 - Desarrollo Web Integrado - UTP).\n\nUSO: 1) Ejecutar primero 'Auth > Login ADMIN' (guarda el token en la variable {{token}}). 2) El resto de requests envian automaticamente 'Authorization: Bearer {{token}}'. Usuarios de prueba: admin/admin123 (ADMIN), user/user123 (USER), guest/guest123 (GUEST).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8082"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "tokenAdmin",
+      "value": ""
+    },
+    {
+      "key": "tokenUser",
+      "value": ""
+    },
+    {
+      "key": "tokenGuest",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Home / Health check",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/"
+      }
+    },
+    {
+      "name": "0. Autenticacion (JWT)",
+      "item": [
+        {
+          "name": "Login ADMIN",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login correcto (200) y token recibido', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const t = pm.response.json().token;",
+                  "  pm.expect(t).to.be.a('string');",
+                  "  pm.collectionVariables.set('token', t);",
+                  "  pm.collectionVariables.set('tokenAdmin', t);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login USER",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"user\",\n  \"password\": \"user123\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login correcto (200) y token recibido', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const t = pm.response.json().token;",
+                  "  pm.expect(t).to.be.a('string');",
+                  "  pm.collectionVariables.set('token', t);",
+                  "  pm.collectionVariables.set('tokenUser', t);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login GUEST",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"guest\",\n  \"password\": \"guest123\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login correcto (200) y token recibido', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const t = pm.response.json().token;",
+                  "  pm.expect(t).to.be.a('string');",
+                  "  pm.collectionVariables.set('token', t);",
+                  "  pm.collectionVariables.set('tokenGuest', t);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Registrar usuario nuevo (rol USER)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"maria\",\n  \"password\": \"maria123\",\n  \"email\": \"maria@agro.pe\",\n  \"nombreCompleto\": \"Maria Lopez\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Registro correcto (201) con token', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "  pm.expect(pm.response.json().roles[0]).to.eql('ROLE_USER');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Registrar usuario duplicado (debe fallar 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"maria\",\n  \"password\": \"maria123\",\n  \"email\": \"maria@agro.pe\",\n  \"nombreCompleto\": \"Maria Lopez\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Registrar con datos invalidos (debe fallar 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"ab\",\n  \"password\": \"123\",\n  \"email\": \"no-es-email\",\n  \"nombreCompleto\": \"\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Login con contrasena incorrecta (debe fallar 401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"incorrecta\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Ver perfil del usuario autenticado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/usuarios/me"
+          }
+        }
+      ],
+      "description": "Ejecutar primero 'Login ADMIN'. Cada login guarda el token JWT en las variables de la coleccion."
+    },
+    {
+      "name": "Productores",
+      "item": [
+        {
+          "name": "Listar productores",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/productores"
+          }
+        },
+        {
+          "name": "Buscar productor por id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/productores/1"
+          }
+        },
+        {
+          "name": "Registrar productor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/productores",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Carlos\",\n  \"apellidos\": \"Mendoza Vera\",\n  \"dni\": \"74859612\",\n  \"telefono\": \"969555777\",\n  \"email\": \"carlos.mendoza@agro.pe\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar productor (DNI invalido - debe fallar 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/productores",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Maria\",\n  \"apellidos\": \"Gomez\",\n  \"dni\": \"123\",\n  \"telefono\": \"969555666\",\n  \"email\": \"maria@agro.pe\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Actualizar productor",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/productores/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Julio Cesar\",\n  \"apellidos\": \"Chunga Nima\",\n  \"dni\": \"41234567\",\n  \"telefono\": \"969111222\",\n  \"email\": \"julio.chunga@agro.pe\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar productor (el creado en \"Registrar productor\", id 3)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/productores/3"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Parcelas",
+      "item": [
+        {
+          "name": "Listar parcelas",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/parcelas"
+          }
+        },
+        {
+          "name": "Listar parcelas por productor",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/parcelas?productorId=1"
+          }
+        },
+        {
+          "name": "Buscar parcela por id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/parcelas/1"
+          }
+        },
+        {
+          "name": "Registrar parcela",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/parcelas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Parcela Nueva Esperanza\",\n  \"ubicacion\": \"Cura Mori, Piura\",\n  \"areaHectareas\": 4.2,\n  \"productorId\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Actualizar parcela",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/parcelas/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Parcela El Progreso II\",\n  \"ubicacion\": \"Valle del Chira, Piura\",\n  \"areaHectareas\": 3.8,\n  \"productorId\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar parcela (la creada en \"Registrar parcela\", id 4)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/parcelas/4"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cultivos",
+      "item": [
+        {
+          "name": "Listar cultivos",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/cultivos"
+          }
+        },
+        {
+          "name": "Registrar cultivo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/cultivos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Cacao\",\n  \"variedad\": \"CCN-51\",\n  \"cicloDiasEstimado\": 720\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Campanas Agricolas",
+      "item": [
+        {
+          "name": "Listar campanas",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/campanas"
+          }
+        },
+        {
+          "name": "Listar campanas por parcela",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/campanas?parcelaId=1"
+          }
+        },
+        {
+          "name": "Registrar campana",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/campanas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaInicio\": \"2026-09-01\",\n  \"fechaFinEstimada\": \"2027-01-15\",\n  \"estado\": \"PLANIFICADA\",\n  \"cultivo\": { \"id\": 1 },\n  \"parcela\": { \"id\": 1 }\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Cosechas (CRUD)",
+      "item": [
+        {
+          "name": "Listar cosechas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/cosechas"
+          }
+        },
+        {
+          "name": "Listar cosechas por campana",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/cosechas?campanaId=3"
+          }
+        },
+        {
+          "name": "Buscar cosecha por id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/cosechas/1"
+          }
+        },
+        {
+          "name": "Registrar cosecha (campana EN_CURSO)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/cosechas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"2026-10-05\",\n  \"cantidadKg\": 4200.5,\n  \"observacion\": \"Cosecha parcial\",\n  \"campanaId\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar cosecha en campana PLANIFICADA (debe fallar 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/cosechas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"2026-10-05\",\n  \"cantidadKg\": 100,\n  \"campanaId\": 2\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar cosecha con cantidad negativa (debe fallar 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/cosechas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"2026-10-05\",\n  \"cantidadKg\": -5,\n  \"campanaId\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Actualizar cosecha",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/cosechas/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"2026-05-10\",\n  \"cantidadKg\": 12600.0,\n  \"observacion\": \"Cantidad corregida\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar cosecha (solo ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/cosechas/2"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Consultas personalizadas JPQL",
+      "item": [
+        {
+          "name": "Campanas por estado EN_CURSO",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/campanas/estado/EN_CURSO"
+          }
+        },
+        {
+          "name": "Campanas por estado FINALIZADA",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/campanas/estado/FINALIZADA"
+          }
+        },
+        {
+          "name": "Campanas por rango de fechas de inicio",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/campanas/fechas?desde=2026-01-01&hasta=2026-06-30"
+          }
+        },
+        {
+          "name": "Campanas por cultivo (nombre parcial)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/campanas/cultivo?nombre=arr"
+          }
+        },
+        {
+          "name": "Campanas atrasadas (EN_CURSO con fecha fin vencida)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/campanas/atrasadas"
+          }
+        },
+        {
+          "name": "Resumen de campanas por estado (GROUP BY)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/campanas/resumen"
+          }
+        },
+        {
+          "name": "Parcelas con area minima",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/parcelas/area-minima?hectareas=4"
+          }
+        },
+        {
+          "name": "Parcelas por ubicacion",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/parcelas/buscar?ubicacion=piura"
+          }
+        },
+        {
+          "name": "Area total de un productor (SUM)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/parcelas/productor/1/area-total"
+          }
+        },
+        {
+          "name": "Productores por nombre o apellido",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/productores/buscar?texto=chunga"
+          }
+        },
+        {
+          "name": "Productores con parcelas mayores a N hectareas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/productores/con-parcelas-mayores-a?hectareas=4"
+          }
+        },
+        {
+          "name": "Cosechas por rango de fechas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/cosechas/fechas?desde=2026-05-01&hasta=2026-05-31"
+          }
+        },
+        {
+          "name": "Total de kg cosechados por campana (SUM)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/cosechas/campana/3/total"
+          }
+        },
+        {
+          "name": "Rango de fechas invertido (debe fallar 400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/campanas/fechas?desde=2026-12-31&hasta=2026-01-01"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Operaciones transaccionales (@Transactional)",
+      "item": [
+        {
+          "name": "Finalizar campana + registrar cosecha (1 transaccion)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/campanas/1/finalizar",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"2026-10-08\",\n  \"cantidadKg\": 15000,\n  \"observacion\": \"Cosecha final de la campana de arroz\"\n}"
+            },
+            "description": "Guarda la cosecha y cambia el estado a FINALIZADA en una sola transaccion."
+          }
+        },
+        {
+          "name": "Finalizar campana ya finalizada (debe fallar 400 y hacer rollback)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/campanas/1/finalizar",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"2026-10-09\",\n  \"cantidadKg\": 500\n}"
+            }
+          }
+        },
+        {
+          "name": "Verificar que no se guardo cosecha extra (rollback)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/cosechas?campanaId=1"
+          }
+        },
+        {
+          "name": "Transferir parcela 1 al productor 2",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/parcelas/1/transferir",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nuevoProductorId\": 2\n}"
+            }
+          }
+        },
+        {
+          "name": "Transferir parcela a productor inexistente (debe fallar 404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/parcelas/1/transferir",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nuevoProductorId\": 999\n}"
+            }
+          }
+        },
+        {
+          "name": "Transferir parcela al mismo productor (debe fallar 400)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/parcelas/1/transferir",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nuevoProductorId\": 2\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "S. Pruebas de seguridad (401 / 403)",
+      "item": [
+        {
+          "name": "Sin token -> 401 Unauthorized",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/productores",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('401 sin token', function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Token invalido -> 401 Unauthorized",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer abc.def.ghi"
+              }
+            ],
+            "url": "{{baseUrl}}/api/productores",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "GUEST intenta crear cultivo -> 403 Forbidden",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/cultivos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Maiz\",\n  \"variedad\": \"Amarillo duro\",\n  \"cicloDiasEstimado\": 120\n}"
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenGuest}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('403 para GUEST', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GUEST lista cultivos -> 200 OK",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/cultivos",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenGuest}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 para GUEST en lectura', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "USER intenta eliminar productor -> 403 Forbidden",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/productores/1",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenUser}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('403 para USER en eliminacion', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "USER intenta listar usuarios (@Secured ADMIN) -> 403",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/usuarios",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenUser}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "ADMIN lista usuarios -> 200 OK",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/usuarios",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "ADMIN asigna roles a un usuario (PUT /api/usuarios/2/roles)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/usuarios/2/roles",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roles\": [\n    \"USER\"\n  ]\n}"
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "description": "Demuestra el control de acceso por rol: ADMIN (todo), USER (leer/crear/editar), GUEST (solo leer)."
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  }
+}

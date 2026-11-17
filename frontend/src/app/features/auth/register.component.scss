@@ -1,0 +1,139 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+:host {
+  display: block;
+}
+
+.pantalla {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  min-height: 100vh;
+
+  @include hasta-tablet {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Panel visual: surcos de cultivo (franjas diagonales) sobre verde profundo
+.portada {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(1.5rem, 4vw, 3.5rem);
+  color: #fff;
+  background:
+    repeating-linear-gradient(104deg, rgba(214, 224, 74, 0.16) 0 3px, transparent 3px 34px),
+    repeating-linear-gradient(104deg, rgba(255, 255, 255, 0.05) 0 14px, transparent 14px 34px),
+    linear-gradient(160deg, $verde-700 0%, $verde-900 100%);
+  overflow: hidden;
+
+  h1 {
+    max-width: 14ch;
+    margin-bottom: 1rem;
+    font-size: clamp(2rem, 4.4vw, 3.4rem);
+  }
+
+  p {
+    max-width: 38ch;
+    color: #cfdcd1;
+  }
+
+  &__cultivos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+
+    span {
+      padding: 0.25rem 0.8rem;
+      border: 1px solid rgba(214, 224, 74, 0.6);
+      border-radius: 999px;
+      color: $limon;
+      font-size: 0.85rem;
+    }
+  }
+
+  @include hasta-tablet {
+    min-height: 220px;
+    justify-content: center;
+
+    h1 {
+      font-size: 1.9rem;
+      max-width: none;
+    }
+
+    p,
+    &__cultivos {
+      display: none;
+    }
+  }
+}
+
+.marca {
+  position: absolute;
+  top: clamp(1.25rem, 3vw, 2.5rem);
+  left: clamp(1.5rem, 4vw, 3.5rem);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: $fuente-titulos;
+  font-size: 1.3rem;
+  font-weight: 700;
+
+  @include hasta-tablet {
+    display: none;
+  }
+}
+
+.panel {
+  display: grid;
+  align-content: center;
+  padding: clamp(1.5rem, 4vw, 3.5rem);
+}
+
+.panel__caja {
+  width: min(430px, 100%);
+  margin-inline: auto;
+}
+
+.panel h2 {
+  font-size: 1.7rem;
+}
+
+.panel .sub {
+  color: $texto-suave;
+  margin-bottom: 1.5rem;
+}
+
+.pie {
+  margin-top: 1.25rem;
+  font-size: 0.925rem;
+  color: $texto-suave;
+}
+
+.btn-ancho {
+  width: 100%;
+  padding: 0.75rem 1rem;
+}
+
+.demo {
+  margin-top: 1.5rem;
+  padding: 0.9rem 1rem;
+  border: 1px dashed #b9c3b5;
+  border-radius: $radio;
+  font-size: 0.875rem;
+
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  &__lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.7rem;
+  }
+}

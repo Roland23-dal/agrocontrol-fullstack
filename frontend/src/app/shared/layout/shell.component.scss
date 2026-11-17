@@ -1,0 +1,154 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.shell {
+  display: grid;
+  grid-template-columns: $ancho-sidebar minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.topbar,
+.velo {
+  display: none;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.25rem 1rem;
+  color: #e7efe8;
+  background:
+    repeating-linear-gradient(100deg, rgba(214, 224, 74, 0.05) 0 2px, transparent 2px 26px),
+    $verde-800;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-family: $fuente-titulos;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+}
+
+nav {
+  display: grid;
+  gap: 0.15rem;
+
+  a {
+    padding: 0.6rem 0.8rem;
+    border-radius: $radio-sm;
+    border-left: 3px solid transparent;
+    color: #cfdcd1;
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.07);
+      color: #fff;
+    }
+
+    &.activo {
+      background: rgba(214, 224, 74, 0.12);
+      border-left-color: $limon;
+      color: $limon;
+    }
+  }
+}
+
+.usuario {
+  margin-top: auto;
+  display: grid;
+  gap: 0.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+
+  strong {
+    color: #fff;
+    overflow-wrap: anywhere;
+  }
+
+  span {
+    font-size: 0.85rem;
+    color: #a9bdae;
+    margin-bottom: 0.6rem;
+  }
+
+  .btn--contorno {
+    color: #e7efe8;
+    border-color: rgba(255, 255, 255, 0.4);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+  }
+}
+
+.contenido {
+  padding: clamp(1rem, 3vw, 2.25rem);
+  min-width: 0;
+}
+
+@include hasta-tablet {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 1rem;
+    background: $verde-800;
+    color: #fff;
+
+    &__menu {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: $radio-sm;
+      color: #fff;
+      font-size: 1.2rem;
+      padding: 0.2rem 0.6rem;
+      cursor: pointer;
+    }
+
+    &__marca {
+      font-family: $fuente-titulos;
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+  }
+
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 50;
+    width: min(#{$ancho-sidebar}, 82vw);
+    transform: translateX(-100%);
+    transition: transform 0.2s ease-out;
+  }
+
+  .shell--abierto {
+    .sidebar {
+      transform: none;
+    }
+
+    .velo {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      background: rgba(16, 38, 29, 0.5);
+    }
+  }
+}

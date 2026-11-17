@@ -1,0 +1,53 @@
+<nav class="migas" aria-label="Ruta de navegación"><a routerLink="/parcelas">Parcelas</a> / {{ esEdicion ? 'Editar' : 'Nueva' }}</nav>
+<header class="page-header">
+  <div>
+    <h1>{{ esEdicion ? 'Editar parcela' : 'Nueva parcela' }}</h1>
+    <p>Los campos marcados con * son obligatorios.</p>
+  </div>
+</header>
+
+@if (cargando()) {
+  <div class="cargando">Cargando datos...</div>
+} @else {
+  <form class="form-tarjeta" [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+    @if (error()) {
+      <div class="alerta alerta--error" role="alert">{{ error() }}</div>
+    }
+
+    <div class="form-grid">
+      <div class="campo">
+        <label for="nombre">Nombre de la parcela *</label>
+        <input id="nombre" type="text" formControlName="nombre" placeholder="Ej. Parcela El Progreso" />
+        <app-field-error [control]="f.nombre" />
+      </div>
+
+      <div class="campo">
+        <label for="areaHectareas">Área (hectáreas) *</label>
+        <input id="areaHectareas" type="number" step="0.01" min="0" formControlName="areaHectareas" />
+        <app-field-error [control]="f.areaHectareas" />
+      </div>
+
+      <div class="campo completo">
+        <label for="ubicacion">Ubicación</label>
+        <input id="ubicacion" type="text" formControlName="ubicacion" placeholder="Ej. Valle del Chira, Piura" />
+        <app-field-error [control]="f.ubicacion" />
+      </div>
+
+      <div class="campo completo">
+        <label for="productorId">Productor propietario *</label>
+        <select id="productorId" formControlName="productorId">
+          <option [ngValue]="null" disabled>Selecciona un productor</option>
+          @for (p of productores(); track p.id) {
+            <option [ngValue]="p.id">{{ p.nombres }} {{ p.apellidos }} (DNI {{ p.dni }})</option>
+          }
+        </select>
+        <app-field-error [control]="f.productorId" />
+      </div>
+    </div>
+
+    <div class="form-acciones">
+      <button type="submit" class="btn" [disabled]="enviando()">{{ enviando() ? 'Guardando...' : 'Guardar' }}</button>
+      <a class="btn btn--contorno" routerLink="/parcelas">Cancelar</a>
+    </div>
+  </form>
+}

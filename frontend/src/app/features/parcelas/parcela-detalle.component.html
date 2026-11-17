@@ -1,0 +1,82 @@
+<nav class="migas" aria-label="Ruta de navegación"><a routerLink="/parcelas">Parcelas</a> / Detalle</nav>
+
+@if (cargando()) {
+  <div class="cargando">Cargando parcela...</div>
+} @else {
+  @if (parcela(); as p) {
+  <header class="page-header">
+    <div>
+      <h1>{{ p.nombre }}</h1>
+      <p>{{ p.areaHectareas | number: '1.0-2' }} ha · {{ p.ubicacion || 'Sin ubicación registrada' }}</p>
+    </div>
+    <div class="page-header__acciones">
+      @if (auth.puedeEscribir()) {
+        <a class="btn btn--contorno" [routerLink]="['/parcelas', p.id, 'editar']">Editar</a>
+        <a class="btn" routerLink="/campanas/nueva" [queryParams]="{ parcelaId: p.id }">Nueva campaña</a>
+      }
+      @if (auth.puedeEliminar()) {
+        <button type="button" class="btn btn--peligro-contorno" (click)="eliminar()">Eliminar</button>
+      }
+    </div>
+  </header>
+
+  <div class="stack">
+    <section class="card">
+      <h2>Datos de la parcela</h2>
+      <dl class="datos">
+        <dt>Productor</dt>
+        <dd><a [routerLink]="['/productores', p.productor.id]">{{ p.productor.nombres }} {{ p.productor.apellidos }}</a></dd>
+        <dt>DNI del productor</dt><dd>{{ p.productor.dni }}</dd>
+        <dt>Área</dt><dd>{{ p.areaHectareas | number: '1.0-2' }} hectáreas</dd>
+        <dt>Ubicación</dt><dd>{{ p.ubicacion || '-' }}</dd>
+      </dl>
+    </section>
+
+    @if (auth.puedeEscribir()) {
+      <section class="card">
+        <h2>Transferir a otro productor</h2>
+        <form class="filtros" style="box-shadow: none; border: 0; padding: 0; margin: 0" (submit)="$event.preventDefault(); transferir()">
+          <div class="campo">
+            <label for="nuevo-productor">Nuevo propietario</label>
+            <select id="nuevo-productor" [formControl]="nuevoProductor">
+              <option [ngValue]="null" disabled>Selecciona un productor</option>
+              @for (o of otrosProductores(); track o.id) {
+                <option [ngValue]="o.id">{{ o.nombres }} {{ o.apellidos }}</option>
+              }
+            </select>
+          </div>
+          <button type="submit" class="btn" [disabled]="transfiriendo() || nuevoProductor.invalid">
+            {{ transfiriendo() ? 'Transfiriendo...' : 'Transferir parcela' }}
+          </button>
+        </form>
+      </section>
+    }
+
+    <section>
+      <h2>Campañas agrícolas de la parcela</h2>
+      @if (campanas().length === 0) {
+        <div class="tabla-wrap"><p class="vacio">Esta parcela aún no tiene campañas.</p></div>
+      } @else {
+        <div class="tabla-wrap">
+          <table class="tabla">
+            <thead>
+              <tr><th>Cultivo</th><th>Inicio</th><th>Fin estimado</th><th>Estado</th><th></th></tr>
+            </thead>
+            <tbody>
+              @for (c of campanas(); track c.id) {
+                <tr>
+                  <td>{{ c.cultivo.nombre }}{{ c.cultivo.variedad ? ' (' + c.cultivo.variedad + ')' : '' }}</td>
+                  <td>{{ c.fechaInicio | date: 'dd/MM/yyyy' }}</td>
+                  <td>{{ c.fechaFinEstimada ? (c.fechaFinEstimada | date: 'dd/MM/yyyy') : '-' }}</td>
+                  <td><app-estado-badge [estado]="c.estado" /></td>
+                  <td><div class="acciones"><a class="btn btn--contorno btn--sm" [routerLink]="['/campanas', c.id]">Ver</a></div></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  </div>
+  }
+}

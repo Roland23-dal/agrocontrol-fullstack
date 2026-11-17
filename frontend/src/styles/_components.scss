@@ -1,0 +1,463 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ---------- Encabezado de página ----------
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  p {
+    margin: 0;
+    color: $texto-suave;
+  }
+
+  &__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+
+.migas {
+  font-size: 0.875rem;
+  color: $texto-suave;
+  margin-bottom: 0.5rem;
+
+  a {
+    color: $texto-suave;
+  }
+}
+
+// ---------- Botones ----------
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid transparent;
+  border-radius: $radio-sm;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.925rem;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  background: $verde-600;
+  color: #fff;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: $verde-700;
+    color: #fff;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &--contorno {
+    background: transparent;
+    color: $verde-600;
+    border-color: $verde-600;
+
+    &:hover {
+      background: $verde-100;
+      color: $verde-800;
+    }
+  }
+
+  &--peligro {
+    background: $peligro;
+
+    &:hover {
+      background: #8f2717;
+    }
+  }
+
+  &--peligro-contorno {
+    background: transparent;
+    color: $peligro;
+    border-color: $peligro;
+
+    &:hover {
+      background: $peligro-fondo;
+      color: $peligro;
+    }
+  }
+
+  &--sm {
+    padding: 0.3rem 0.65rem;
+    font-size: 0.825rem;
+  }
+}
+
+// ---------- Tarjetas ----------
+.card {
+  @include tarjeta;
+
+  h2 {
+    margin-bottom: 0.75rem;
+  }
+}
+
+.grid-tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+
+  @include hasta-tablet {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stack {
+  display: grid;
+  gap: 1.25rem;
+}
+
+// ---------- Barra de filtros ----------
+.filtros {
+  @include tarjeta(1rem);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1rem;
+
+  .campo {
+    margin: 0;
+    min-width: 150px;
+    flex: 1 1 150px;
+  }
+}
+
+// ---------- Formularios ----------
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+
+  label {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .ayuda {
+    font-size: 0.8rem;
+    color: $texto-suave;
+  }
+}
+
+input[type='text'],
+input[type='password'],
+input[type='email'],
+input[type='number'],
+input[type='date'],
+input[type='search'],
+select,
+textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #b9c3b5;
+  border-radius: $radio-sm;
+  background: #fff;
+  font: inherit;
+  color: $texto;
+
+  &::placeholder {
+    color: #8a968e;
+  }
+
+  &:disabled {
+    background: #eef0eb;
+    color: $texto-suave;
+  }
+
+  &.ng-invalid.ng-touched,
+  &.ng-invalid.ng-dirty {
+    border-color: $peligro;
+    background: #fffafa;
+  }
+}
+
+textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 1.25rem;
+
+  .completo {
+    grid-column: 1 / -1;
+  }
+
+  @include hasta-movil {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.form-tarjeta {
+  @include tarjeta(1.5rem);
+  max-width: 760px;
+}
+
+.error-campo {
+  color: $peligro;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+// ---------- Alertas ----------
+.alerta {
+  padding: 0.75rem 1rem;
+  border-radius: $radio-sm;
+  margin-bottom: 1rem;
+  font-size: 0.925rem;
+
+  &--error {
+    @include insignia($peligro-fondo, #7a1f12);
+  }
+
+  &--info {
+    @include insignia($info-fondo, $info-texto);
+  }
+
+  &--exito {
+    @include insignia($verde-100, $verde-800);
+  }
+}
+
+// ---------- Tablas ----------
+.tabla-wrap {
+  @include tarjeta(0);
+  overflow-x: auto;
+}
+
+table.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+  font-size: 0.925rem;
+
+  th,
+  td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid $linea;
+    vertical-align: middle;
+  }
+
+  th {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: $texto-suave;
+    background: #f7f9f5;
+    white-space: nowrap;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  tbody tr:hover {
+    background: #f7faf4;
+  }
+
+  .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .acciones {
+    display: flex;
+    gap: 0.4rem;
+    justify-content: flex-end;
+    white-space: nowrap;
+  }
+
+  tfoot td {
+    font-weight: 600;
+    background: #f7f9f5;
+    border-top: 2px solid $linea;
+  }
+}
+
+// ---------- Insignias de estado ----------
+.insignia {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &--planificada {
+    @include insignia($info-fondo, $info-texto);
+  }
+
+  &--en_curso {
+    @include insignia($verde-100, #1d5b2a);
+  }
+
+  &--finalizada {
+    @include insignia($aviso-fondo, $aviso-texto);
+  }
+
+  &--atrasada {
+    @include insignia($peligro-fondo, #8f2a1e);
+  }
+
+  &--rol {
+    @include insignia(#e9ecf5, #333f73);
+  }
+}
+
+// ---------- Detalle (lista de datos) ----------
+dl.datos {
+  display: grid;
+  grid-template-columns: minmax(120px, 190px) 1fr;
+  gap: 0.6rem 1rem;
+  margin: 0;
+
+  dt {
+    color: $texto-suave;
+    font-size: 0.875rem;
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+
+  @include hasta-movil {
+    grid-template-columns: 1fr;
+    gap: 0.1rem;
+
+    dd {
+      margin-bottom: 0.6rem;
+    }
+  }
+}
+
+// ---------- Estados vacío / cargando ----------
+.vacio {
+  padding: 2.5rem 1rem;
+  text-align: center;
+  color: $texto-suave;
+}
+
+.cargando {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 2rem 1rem;
+  color: $texto-suave;
+
+  &::before {
+    content: '';
+    width: 1.1rem;
+    height: 1.1rem;
+    border: 3px solid $linea;
+    border-top-color: $verde-600;
+    border-radius: 50%;
+    animation: girar 0.8s linear infinite;
+  }
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ---------- Paginación ----------
+.paginador {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid $linea;
+  font-size: 0.875rem;
+  color: $texto-suave;
+
+  &__botones {
+    display: flex;
+    gap: 0.35rem;
+  }
+}
+
+// ---------- Tarjeta de cultivo ----------
+.cultivo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border-top: 4px solid $verde-500;
+
+  h2 {
+    margin-bottom: 0;
+
+    a {
+      color: $texto;
+      text-decoration: none;
+
+      &:hover {
+        color: $verde-600;
+      }
+    }
+  }
+
+  &__variedad {
+    color: $texto-suave;
+    margin: 0;
+  }
+
+  &__ciclo {
+    margin: 0.5rem 0 0.75rem;
+  }
+
+  .form-acciones {
+    margin-top: auto;
+  }
+}
+
+// Casilla de verificación en la barra de filtros
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding-bottom: 0.65rem;
+  font-weight: 500;
+  cursor: pointer;
+
+  input {
+    width: 1.05rem;
+    height: 1.05rem;
+    accent-color: $verde-600;
+  }
+}

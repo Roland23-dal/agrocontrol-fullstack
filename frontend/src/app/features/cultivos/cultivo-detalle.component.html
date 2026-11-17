@@ -1,0 +1,58 @@
+<nav class="migas" aria-label="Ruta de navegación"><a routerLink="/cultivos">Cultivos</a> / Detalle</nav>
+
+@if (cargando()) {
+  <div class="cargando">Cargando cultivo...</div>
+} @else {
+  @if (cultivo(); as c) {
+  <header class="page-header">
+    <div>
+      <h1>{{ c.nombre }}</h1>
+      <p>{{ c.variedad || 'Sin variedad registrada' }}</p>
+    </div>
+    <div class="page-header__acciones">
+      @if (auth.puedeEscribir()) {
+        <a class="btn btn--contorno" [routerLink]="['/cultivos', c.id, 'editar']">Editar</a>
+      }
+      @if (auth.puedeEliminar()) {
+        <button type="button" class="btn btn--peligro-contorno" (click)="eliminar()">Eliminar</button>
+      }
+    </div>
+  </header>
+
+  <div class="stack">
+    <section class="card">
+      <h2>Datos del cultivo</h2>
+      <dl class="datos">
+        <dt>Variedad</dt><dd>{{ c.variedad || '-' }}</dd>
+        <dt>Ciclo estimado</dt><dd>{{ c.cicloDiasEstimado ? c.cicloDiasEstimado + ' días' : '-' }}</dd>
+      </dl>
+    </section>
+
+    <section>
+      <h2>Campañas con este cultivo</h2>
+      @if (campanas().length === 0) {
+        <div class="tabla-wrap"><p class="vacio">Todavía no hay campañas con este cultivo.</p></div>
+      } @else {
+        <div class="tabla-wrap">
+          <table class="tabla">
+            <thead>
+              <tr><th>Parcela</th><th>Inicio</th><th>Fin estimado</th><th>Estado</th><th></th></tr>
+            </thead>
+            <tbody>
+              @for (x of campanas(); track x.id) {
+                <tr>
+                  <td>{{ x.parcela.nombre }}</td>
+                  <td>{{ x.fechaInicio | date: 'dd/MM/yyyy' }}</td>
+                  <td>{{ x.fechaFinEstimada ? (x.fechaFinEstimada | date: 'dd/MM/yyyy') : '-' }}</td>
+                  <td><app-estado-badge [estado]="x.estado" /></td>
+                  <td><div class="acciones"><a class="btn btn--contorno btn--sm" [routerLink]="['/campanas', x.id]">Ver</a></div></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  </div>
+  }
+}

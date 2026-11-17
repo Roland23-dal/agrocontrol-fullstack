@@ -1,0 +1,56 @@
+<nav class="migas" aria-label="Ruta de navegación"><a routerLink="/productores">Productores</a> / {{ esEdicion ? 'Editar' : 'Nuevo' }}</nav>
+<header class="page-header">
+  <div>
+    <h1>{{ esEdicion ? 'Editar productor' : 'Nuevo productor' }}</h1>
+    <p>Los campos marcados con * son obligatorios.</p>
+  </div>
+</header>
+
+@if (cargando()) {
+  <div class="cargando">Cargando datos...</div>
+} @else {
+  <form class="form-tarjeta" [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+    @if (error()) {
+      <div class="alerta alerta--error" role="alert">{{ error() }}</div>
+    }
+
+    <div class="form-grid">
+      <div class="campo">
+        <label for="nombres">Nombres *</label>
+        <input id="nombres" type="text" formControlName="nombres" />
+        <app-field-error [control]="f.nombres" />
+      </div>
+
+      <div class="campo">
+        <label for="apellidos">Apellidos *</label>
+        <input id="apellidos" type="text" formControlName="apellidos" />
+        <app-field-error [control]="f.apellidos" />
+      </div>
+
+      <div class="campo">
+        <label for="dni">DNI *</label>
+        <input id="dni" type="text" inputmode="numeric" maxlength="8" formControlName="dni" />
+        <span class="ayuda">8 dígitos numéricos.</span>
+        <app-field-error [control]="f.dni" patron="El DNI debe tener exactamente 8 dígitos numéricos" />
+      </div>
+
+      <div class="campo">
+        <label for="telefono">Teléfono</label>
+        <input id="telefono" type="text" inputmode="tel" maxlength="9" formControlName="telefono" />
+        <span class="ayuda">Celular de 9 dígitos que empieza con 9.</span>
+        <app-field-error [control]="f.telefono" patron="Ingresa un celular válido de 9 dígitos que empiece con 9" />
+      </div>
+
+      <div class="campo completo">
+        <label for="email">Correo electrónico</label>
+        <input id="email" type="email" formControlName="email" />
+        <app-field-error [control]="f.email" />
+      </div>
+    </div>
+
+    <div class="form-acciones">
+      <button type="submit" class="btn" [disabled]="enviando()">{{ enviando() ? 'Guardando...' : 'Guardar' }}</button>
+      <a class="btn btn--contorno" routerLink="/productores">Cancelar</a>
+    </div>
+  </form>
+}

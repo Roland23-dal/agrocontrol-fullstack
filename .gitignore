@@ -1,0 +1,20 @@
+# Backend
+backend/target/
+backend/.mvn/
+*.log
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/out-tsc/
+npm-debug.log*
+
+# IDEs y configuraciones locales
+.vscode/
+.idea/
+*.iml
+
+# Sistema Operativo
+.DS_Store
+Thumbs.db

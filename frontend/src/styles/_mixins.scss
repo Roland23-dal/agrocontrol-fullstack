@@ -1,0 +1,35 @@
+@use 'variables' as *;
+
+// Media queries responsivas (diseño responsivo básico)
+@mixin hasta-tablet {
+  @media (max-width: #{$bp-tablet}) {
+    @content;
+  }
+}
+
+@mixin hasta-movil {
+  @media (max-width: #{$bp-movil}) {
+    @content;
+  }
+}
+
+// Anillo de foco visible para accesibilidad con teclado
+@mixin foco {
+  outline: 3px solid rgba($mango, 0.75);
+  outline-offset: 2px;
+}
+
+// Superficie tipo tarjeta
+@mixin tarjeta($padding: 1.25rem) {
+  background: $superficie;
+  border: 1px solid $linea;
+  border-radius: $radio;
+  box-shadow: $sombra;
+  padding: $padding;
+}
+
+// Insignia de estado con color de fondo y de texto
+@mixin insignia($fondo, $texto-color) {
+  background: $fondo;
+  color: $texto-color;
+}

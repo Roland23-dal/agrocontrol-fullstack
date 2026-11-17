@@ -1,0 +1,60 @@
+<header class="page-header">
+  <div>
+    <h1>Productores</h1>
+    <p>Agricultores asociados y sus datos de contacto.</p>
+  </div>
+  @if (auth.puedeEscribir()) {
+    <div class="page-header__acciones">
+      <a class="btn" routerLink="/productores/nuevo">Nuevo productor</a>
+    </div>
+  }
+</header>
+
+<div class="filtros">
+  <div class="campo">
+    <label for="busqueda">Buscar por nombre o apellido</label>
+    <input id="busqueda" type="search" [formControl]="busqueda" placeholder="Ej. Chunga" />
+  </div>
+</div>
+
+@if (cargando()) {
+  <div class="cargando">Cargando productores...</div>
+} @else if (productores().length === 0) {
+  <div class="tabla-wrap"><p class="vacio">No se encontraron productores.</p></div>
+} @else {
+  <div class="tabla-wrap">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Nombre completo</th>
+          <th>DNI</th>
+          <th>Teléfono</th>
+          <th>Correo</th>
+          <th><span class="visually-hidden">Acciones</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of visibles(); track p.id) {
+          <tr>
+            <td><a [routerLink]="['/productores', p.id]">{{ p.nombres }} {{ p.apellidos }}</a></td>
+            <td>{{ p.dni }}</td>
+            <td>{{ p.telefono || '-' }}</td>
+            <td>{{ p.email || '-' }}</td>
+            <td>
+              <div class="acciones">
+                <a class="btn btn--contorno btn--sm" [routerLink]="['/productores', p.id]">Ver</a>
+                @if (auth.puedeEscribir()) {
+                  <a class="btn btn--contorno btn--sm" [routerLink]="['/productores', p.id, 'editar']">Editar</a>
+                }
+                @if (auth.puedeEliminar()) {
+                  <button type="button" class="btn btn--peligro-contorno btn--sm" (click)="eliminar(p)">Eliminar</button>
+                }
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    <app-paginador [total]="productores().length" [pagina]="pagina()" [tamano]="tamano" (paginaChange)="pagina.set($event)" />
+  </div>
+}

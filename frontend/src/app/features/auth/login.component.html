@@ -1,0 +1,58 @@
+<div class="pantalla">
+  <section class="portada">
+    <div class="marca">
+      <svg viewBox="0 0 64 64" width="34" height="34" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="#d6e04a"/>
+        <path d="M14 46c10-2 18-10 20-26 6 6 10 14 6 24-4 8-16 8-26 2z" fill="#17342a"/>
+      </svg>
+      AgroControl
+    </div>
+    <h1>De la siembra a la cosecha, todo en un solo registro.</h1>
+    <p>Trazabilidad de productores, parcelas y campañas agrícolas de la asociación.</p>
+    <div class="portada__cultivos" aria-hidden="true">
+      <span>Arroz</span><span>Limón</span><span>Mango</span>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel__caja">
+      <h2>Iniciar sesión</h2>
+      <p class="sub">Ingresa con tu usuario para continuar.</p>
+
+      @if (error()) {
+        <div class="alerta alerta--error" role="alert">{{ error() }}</div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="entrar()" novalidate>
+        <div class="campo">
+          <label for="username">Usuario</label>
+          <input id="username" type="text" formControlName="username" autocomplete="username" placeholder="Ej. admin" />
+          <app-field-error [control]="f.username" />
+        </div>
+
+        <div class="campo">
+          <label for="password">Contraseña</label>
+          <input id="password" type="password" formControlName="password" autocomplete="current-password" placeholder="Tu contraseña" />
+          <app-field-error [control]="f.password" />
+        </div>
+
+        <button type="submit" class="btn btn-ancho" [disabled]="enviando()">
+          {{ enviando() ? 'Ingresando...' : 'Ingresar' }}
+        </button>
+      </form>
+
+      <p class="pie">¿No tienes cuenta? <a routerLink="/registro">Regístrate aquí</a></p>
+
+      @if (mostrarDemo) {
+        <details class="demo">
+          <summary>Cuentas de prueba (solo desarrollo)</summary>
+          <div class="demo__lista">
+            <button type="button" class="btn btn--contorno btn--sm" (click)="usarCuentaDemo('admin', 'admin123')">ADMIN</button>
+            <button type="button" class="btn btn--contorno btn--sm" (click)="usarCuentaDemo('user', 'user123')">USER</button>
+            <button type="button" class="btn btn--contorno btn--sm" (click)="usarCuentaDemo('guest', 'guest123')">GUEST</button>
+          </div>
+        </details>
+      }
+    </div>
+  </section>
+</div>

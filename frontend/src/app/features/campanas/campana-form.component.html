@@ -1,0 +1,73 @@
+<nav class="migas" aria-label="Ruta de navegación"><a routerLink="/campanas">Campañas</a> / {{ esEdicion ? 'Editar' : 'Nueva' }}</nav>
+<header class="page-header">
+  <div>
+    <h1>{{ esEdicion ? 'Editar campaña' : 'Nueva campaña' }}</h1>
+    <p>Los campos marcados con * son obligatorios.</p>
+  </div>
+</header>
+
+@if (cargando()) {
+  <div class="cargando">Cargando datos...</div>
+} @else {
+  <form class="form-tarjeta" [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+    @if (error()) {
+      <div class="alerta alerta--error" role="alert">{{ error() }}</div>
+    }
+
+    <div class="form-grid">
+      <div class="campo">
+        <label for="parcelaId">Parcela *</label>
+        <select id="parcelaId" formControlName="parcelaId">
+          <option [ngValue]="null" disabled>Selecciona una parcela</option>
+          @for (p of parcelas(); track p.id) {
+            <option [ngValue]="p.id">{{ p.nombre }} ({{ p.areaHectareas }} ha)</option>
+          }
+        </select>
+        <app-field-error [control]="f.parcelaId" />
+      </div>
+
+      <div class="campo">
+        <label for="cultivoId">Cultivo *</label>
+        <select id="cultivoId" formControlName="cultivoId">
+          <option [ngValue]="null" disabled>Selecciona un cultivo</option>
+          @for (c of cultivos(); track c.id) {
+            <option [ngValue]="c.id">{{ c.nombre }}{{ c.variedad ? ' - ' + c.variedad : '' }}</option>
+          }
+        </select>
+        <app-field-error [control]="f.cultivoId" />
+      </div>
+
+      <div class="campo">
+        <label for="fechaInicio">Fecha de inicio *</label>
+        <input id="fechaInicio" type="date" formControlName="fechaInicio" />
+        <app-field-error [control]="f.fechaInicio" />
+      </div>
+
+      <div class="campo">
+        <label for="fechaFinEstimada">Fecha de fin estimada</label>
+        <input id="fechaFinEstimada" type="date" formControlName="fechaFinEstimada" />
+        @if (form.hasError('rangoFechas')) {
+          <span class="error-campo" role="alert">La fecha de fin no puede ser anterior a la fecha de inicio</span>
+        }
+      </div>
+
+      <div class="campo completo">
+        <label for="estado">Estado *</label>
+        <select id="estado" formControlName="estado">
+          @for (e of estados; track e) {
+            <option [value]="e">{{ e === 'EN_CURSO' ? 'En curso' : e === 'PLANIFICADA' ? 'Planificada' : 'Finalizada' }}</option>
+          }
+        </select>
+        @if (esEdicion) {
+          <span class="ayuda">Al editar solo pueden modificarse las fechas y el estado. Para cerrar la campaña con su cosecha usa "Finalizar campaña" en el detalle.</span>
+        }
+        <app-field-error [control]="f.estado" />
+      </div>
+    </div>
+
+    <div class="form-acciones">
+      <button type="submit" class="btn" [disabled]="enviando()">{{ enviando() ? 'Guardando...' : 'Guardar' }}</button>
+      <a class="btn btn--contorno" routerLink="/campanas">Cancelar</a>
+    </div>
+  </form>
+}

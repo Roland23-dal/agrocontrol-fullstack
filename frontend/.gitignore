@@ -1,0 +1,9 @@
+# Dependencias y compilados
+node_modules/
+dist/
+out-tsc/
+.angular/
+# Editor / SO
+.idea/
+.DS_Store
+npm-debug.log*

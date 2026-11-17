@@ -1,0 +1,40 @@
+// ==========================================================
+// AgroControl - Variables de diseño (SASS)
+// Paleta inspirada en el campo piurano: arrozal (verde), limón sutil y mango.
+// ==========================================================
+
+// Colores base
+$verde-900: #10261d;
+$verde-800: #17342a;
+$verde-700: #1f4a3a;
+$verde-600: #1f6b4a; // color primario (botones, enlaces)
+$verde-500: #2f8a5f;
+$verde-100: #dcefd9;
+$limon: #d6e04a;
+$mango: #f0a02b;
+$papel: #f2f4ef;
+$superficie: #ffffff;
+$linea: #d9ded3;
+$texto: #1d2a22;
+$texto-suave: #55645b;
+$peligro: #b3321f;
+$peligro-fondo: #fde0dc;
+$aviso-fondo: #fbe7c4;
+$aviso-texto: #7a4a05;
+$info-fondo: #e6edf5;
+$info-texto: #2c4a6b;
+
+// Tipografía
+$fuente-titulos: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+$fuente-texto: 'Instrument Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+// Espaciado, radios, sombras
+$radio-sm: 6px;
+$radio: 10px;
+$radio-lg: 16px;
+$sombra: 0 1px 2px rgba($verde-900, 0.06), 0 4px 14px rgba($verde-900, 0.05);
+
+// Layout
+$ancho-sidebar: 248px;
+$bp-tablet: 900px;
+$bp-movil: 600px;

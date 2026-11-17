@@ -1,0 +1,81 @@
+<header class="page-header">
+  <div>
+    <h1>Parcelas</h1>
+    <p>Terrenos de cultivo registrados y su propietario.</p>
+  </div>
+  @if (auth.puedeEscribir()) {
+    <div class="page-header__acciones">
+      <a class="btn" routerLink="/parcelas/nueva">Nueva parcela</a>
+    </div>
+  }
+</header>
+
+<form class="filtros" [formGroup]="filtros" (submit)="$event.preventDefault()">
+  <div class="campo">
+    <label for="f-ubicacion">Ubicación</label>
+    <input id="f-ubicacion" type="search" formControlName="ubicacion" placeholder="Ej. Piura" />
+  </div>
+  <div class="campo">
+    <label for="f-area">Área mínima (ha)</label>
+    <input id="f-area" type="number" min="0" step="0.5" formControlName="areaMinima" />
+  </div>
+  <div class="campo">
+    <label for="f-productor">Productor</label>
+    <select id="f-productor" formControlName="productorId">
+      <option [ngValue]="null">Todos</option>
+      @for (p of productores(); track p.id) {
+        <option [ngValue]="p.id">{{ p.nombres }} {{ p.apellidos }}</option>
+      }
+    </select>
+  </div>
+  <button type="button" class="btn btn--contorno" (click)="limpiar()">Limpiar filtros</button>
+</form>
+
+@if (cargando()) {
+  <div class="cargando">Cargando parcelas...</div>
+} @else if (parcelas().length === 0) {
+  <div class="tabla-wrap"><p class="vacio">No se encontraron parcelas con esos criterios.</p></div>
+} @else {
+  <div class="tabla-wrap">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Parcela</th>
+          <th>Ubicación</th>
+          <th>Productor</th>
+          <th class="num">Área (ha)</th>
+          <th><span class="visually-hidden">Acciones</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of visibles(); track p.id) {
+          <tr>
+            <td><a [routerLink]="['/parcelas', p.id]">{{ p.nombre }}</a></td>
+            <td>{{ p.ubicacion || '-' }}</td>
+            <td><a [routerLink]="['/productores', p.productor.id]">{{ p.productor.nombres }} {{ p.productor.apellidos }}</a></td>
+            <td class="num">{{ p.areaHectareas | number: '1.0-2' }}</td>
+            <td>
+              <div class="acciones">
+                <a class="btn btn--contorno btn--sm" [routerLink]="['/parcelas', p.id]">Ver</a>
+                @if (auth.puedeEscribir()) {
+                  <a class="btn btn--contorno btn--sm" [routerLink]="['/parcelas', p.id, 'editar']">Editar</a>
+                }
+                @if (auth.puedeEliminar()) {
+                  <button type="button" class="btn btn--peligro-contorno btn--sm" (click)="eliminar(p)">Eliminar</button>
+                }
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">Total de hectáreas ({{ parcelas().length }} parcelas)</td>
+          <td class="num">{{ areaTotal() | number: '1.0-2' }}</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+    <app-paginador [total]="parcelas().length" [pagina]="pagina()" [tamano]="tamano" (paginaChange)="pagina.set($event)" />
+  </div>
+}
